@@ -17,7 +17,35 @@
         "command": "to-do-list-demo.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "toDoList",
+          "title": "To Do List Demo",
+          "icon": "media/icon/to-do-list.svg"
+        }
+      ]
+    },
+    "views": {
+      "toDoList": [
+        {
+          "type": "webview",
+          "id": "addTaskView",
+          "name": "添加任务"
+        },
+        {
+          "type": "webview",
+          "id": "toDoListView",
+          "name": "待办项"
+        },
+        {
+          "type": "webview",
+          "id": "doneView",
+          "name": "已完成"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
