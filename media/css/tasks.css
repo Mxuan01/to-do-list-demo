@@ -1,0 +1,8 @@
+.task-list {
+  line-height: 22px;
+}
+
+.task-item {
+  margin-bottom: 4px;
+  cursor: pointer;
+}
