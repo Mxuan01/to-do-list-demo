@@ -6,8 +6,13 @@
   // @ts-ignore
   const vscode = acquireVsCodeApi();
 
+  /** @type {{ toDoList: { id: string; content: string; }[]; }} */
+  const toDoListState = vscode.getState() || {
+    toDoList: [],
+  };
+
   /** @type {{ id: string; content: string; }[] }} */
-  let toDoList = [];
+  let toDoList = toDoListState.toDoList || [];
 
   /**
    * @param { string[] } classnames
@@ -37,6 +42,8 @@
    * @param {{ id: string; content: string; }[]} tasks
    */
   function updateToDoList(tasks) {
+    vscode.setState({ toDoList: tasks });
+
     const newToDoListEle = createDivElement(["task-list"]);
     tasks.forEach((task) => {
       const taskItem = createDivElement(["task-item"], task.content, task.id);
@@ -96,4 +103,6 @@
   document
     .querySelector(".view-container")
     ?.addEventListener("click", doneTask);
+
+  updateToDoList(toDoList);
 })();

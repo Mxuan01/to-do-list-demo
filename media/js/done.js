@@ -6,8 +6,13 @@
   // @ts-ignore
   const vscode = acquireVsCodeApi();
 
+  /** @type {{ doneList: { id: string; content: string; }[]; }} */
+  const doneState = vscode.getState() || {
+    doneList: [],
+  };
+
   /** @type {{ id: string; content: string; }[] }} */
-  let doneList = [];
+  let doneList = doneState.doneList || [];
 
   /**
    * @param { string[] } classnames
@@ -37,6 +42,8 @@
    * @param {{ id: string; content: string; }[]} tasks
    */
   function updateDoneList(tasks) {
+    vscode.setState({ doneList: tasks });
+
     const newDoneListEle = createDivElement(["task-list"]);
     tasks.forEach((task) => {
       const taskItem = createDivElement(["task-item"], task.content, task.id);
@@ -91,4 +98,6 @@
   document
     .querySelector(".view-container")
     ?.addEventListener("click", undoTask);
+
+  updateDoneList(doneList);
 })();
