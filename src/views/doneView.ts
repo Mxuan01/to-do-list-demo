@@ -10,11 +10,15 @@ class DoneViewProvider implements vscode.WebviewViewProvider {
 
   public static readonly viewType = ViewType.doneView;
 
+  private _webview?: vscode.Webview;
+
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
+    this._webview = webviewView.webview;
+
     setWebview(ViewType.doneView, webviewView.webview);
 
     webviewView.webview.options = getWebviewOptions(this._extensionUri);
@@ -29,6 +33,12 @@ class DoneViewProvider implements vscode.WebviewViewProvider {
     });
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+  }
+
+  public clearDoneList() {
+    this._webview?.postMessage({
+      type: "clearDoneList",
+    });
   }
 
   private _toUndoTask(data: { id: string; content: string }) {

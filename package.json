@@ -14,8 +14,9 @@
   "contributes": {
     "commands": [
       {
-        "command": "to-do-list-demo.helloWorld",
-        "title": "Hello World"
+        "command": "to-do-list-demo.clearDoneList",
+        "title": "To Do List Demo: 清空已完成任务",
+        "icon": "$(notebook-delete-cell)"
       }
     ],
     "viewsContainers": {
@@ -43,6 +44,15 @@
           "type": "webview",
           "id": "doneView",
           "name": "已完成"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "to-do-list-demo.clearDoneList",
+          "group": "navigation",
+          "when": "view === doneView"
         }
       ]
     }

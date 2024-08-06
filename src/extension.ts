@@ -15,20 +15,6 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "to-do-list-demo" is now active!'
   );
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "to-do-list-demo.helloWorld",
-    () => {
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from to do list demo!");
-    }
-  );
-
-  context.subscriptions.push(disposable);
-
   const addTaskViewProvider = new AddTaskViewProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -51,6 +37,15 @@ export function activate(context: vscode.ExtensionContext) {
       DoneViewProvider.viewType,
       doneViewProvider
     )
+  );
+
+  // The command has been defined in the package.json file
+  // Now provide the implementation of the command with registerCommand
+  // The commandId parameter must match the command field in package.json
+  context.subscriptions.push(
+    vscode.commands.registerCommand("to-do-list-demo.clearDoneList", () => {
+      doneViewProvider.clearDoneList();
+    })
   );
 }
 

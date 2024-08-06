@@ -42,6 +42,7 @@
    * @param {{ id: string; content: string; }[]} tasks
    */
   function updateDoneList(tasks) {
+    doneList = tasks;
     vscode.setState({ doneList: tasks });
 
     const newDoneListEle = createDivElement(["task-list"]);
@@ -67,6 +68,10 @@
     updateDoneList(doneList);
   }
 
+  function clearDoneList() {
+    updateDoneList([]);
+  }
+
   // Handle messages sent from the extension to the webview
   window.addEventListener("message", (event) => {
     // The json data that the extension sent
@@ -75,6 +80,8 @@
     switch (message.type) {
       case "addTask":
         return toUpdateDoneList(message.data);
+      case "clearDoneList":
+        return clearDoneList();
     }
   });
 
@@ -89,8 +96,7 @@
         }
         return !isUndoTask;
       });
-      doneList = filteredList;
-      updateDoneList(doneList);
+      updateDoneList(filteredList);
       vscode.postMessage({ type: "undoTask", data: undoTaskData });
     }
   }

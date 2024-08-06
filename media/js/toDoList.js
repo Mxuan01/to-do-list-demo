@@ -42,6 +42,7 @@
    * @param {{ id: string; content: string; }[]} tasks
    */
   function updateToDoList(tasks) {
+    toDoList = tasks;
     vscode.setState({ toDoList: tasks });
 
     const newToDoListEle = createDivElement(["task-list"]);
@@ -94,8 +95,7 @@
         }
         return !isDoneTask;
       });
-      toDoList = filteredList;
-      updateToDoList(toDoList);
+      updateToDoList(filteredList);
       vscode.postMessage({ type: "doneTask", data: doneTaskData });
     }
   }
