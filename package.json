@@ -55,6 +55,17 @@
           "when": "view === doneView"
         }
       ]
+    },
+    "configuration": {
+      "title": "To Do List Demo",
+      "properties": {
+        "toDoListDemo.toDoListMaxCount": {
+          "type": "number",
+          "description": "待办项最大数量",
+          "default": 10,
+          "minimum": 1
+        }
+      }
     }
   },
   "scripts": {

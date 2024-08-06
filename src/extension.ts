@@ -47,6 +47,17 @@ export function activate(context: vscode.ExtensionContext) {
       doneViewProvider.clearDoneList();
     })
   );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(() => {
+      console.log(
+        "待办项最大数量",
+        vscode.workspace
+          .getConfiguration()
+          .get<number>("toDoListDemo.toDoListMaxCount")
+      );
+    })
+  );
 }
 
 // This method is called when your extension is deactivated
