@@ -1,71 +1,21 @@
-# to-do-list-demo README
+# To Do List Demo
 
-This is the README for your extension "to-do-list-demo". After writing up a brief description, we recommend including the following sections.
+这是一个用来实践 vscode webview 插件开发的 demo 项目。其中 feature/v0.1.0 分支对应的 demo 是未使用 react 开发 webview 的粗糙版 demo。
 
-## Features
+## 开发调试流程
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+1. 项目根目录执行 `pnpm install`
 
-For example if there is an image subfolder under your extension project workspace:
+2. 项目根目录执行 `pnpm watch`
 
-\!\[feature X\]\(images/feature-x.png\)
+3. 完成功能开发后，在插件代码窗口中唤起命令行面板（⇧⌘P），并执行 `Debug: Start Debugging`，便会打开一个新的插件调试窗口，此时在活动栏中就可以找到我们的插件 icon，点击后即可看到插件的视图（见步骤 4 图示）。
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+4. 如果你要检查元素样式，可以在命令行面板中输入执行 `Developer: Toggle Developer Tools`，这时就会出现开发者工具窗口，之后便可以像调试浏览器中的网页一样调试这些 webview，如图示：
 
-## Requirements
+   ![inspect](inspect.png)
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+5. 如果你要调试插件代码，可使用 vscode 内置的 debug 功能，只需在相应的代码行处添加断点，这样当你打开插件调试窗口后，vscode 就会自动命中这些断点，如图示：
 
-## Extension Settings
+   ![debug](debug.png)
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+6. 当你修改了部分代码后，在插件调试窗口，你可以在命令行面板中输入 `Developer: Reload Webview` 以重新加载所有 webview（或通过 ⌘R 刷新也行）
