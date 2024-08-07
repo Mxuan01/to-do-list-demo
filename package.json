@@ -2,7 +2,7 @@
   "name": "to-do-list-demo",
   "displayName": "to do list demo",
   "description": "this is a vscode to-do list demo",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.91.0"
   },
