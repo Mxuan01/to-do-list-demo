@@ -1,12 +1,11 @@
 import * as React from "react";
-import { createRoot } from "react-dom/client";
 
 import { ViewType } from "webview/constants";
+import { getClientRoot } from "webview/utils";
 
 import { ToDoList } from "./ToDoList";
 
-const container = document.querySelector(`#${ViewType.toDoListView}`)!;
-const root = createRoot(container);
+const root = getClientRoot(ViewType.toDoListView);
 root.render(<ToDoList />);
 
 // Webpack HMR
