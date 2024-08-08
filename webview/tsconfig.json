@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES6",
+    "lib": ["ESNext", "DOM"],
+    "baseUrl": "./",
+    "paths": {
+      "webview/*": ["../webview/*"]
+    },
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node"
+  }
+}
