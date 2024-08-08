@@ -1,3 +1,5 @@
+import "webview/styles/index.less";
+
 import * as React from "react";
 
 import { ViewType } from "webview/constants";

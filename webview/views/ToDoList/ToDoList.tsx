@@ -66,7 +66,10 @@ export const ToDoList: FunctionComponent = () => {
     <div className={style("task-list")}>
       {taskList.map((task) => {
         return (
-          <div className={style("task-item")} key={task.id}>
+          <div
+            className={style("task-item", "task-item-high-contrast")}
+            key={task.id}
+          >
             <VSCodeCheckbox onChange={() => doneTask(task)}>
               {task.content}
             </VSCodeCheckbox>
