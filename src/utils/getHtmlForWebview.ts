@@ -9,8 +9,7 @@ const webviewInfoMap: Record<
 > = {
   [ViewType.addTaskView]: {
     id: ViewType.addTaskView,
-    title: "添加任务",
-    noStyle: true,
+    title: "添加待办项",
   },
   [ViewType.toDoListView]: {
     id: ViewType.toDoListView,

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import type { FunctionComponent } from "react";
+import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
+import { CloseCircleOutlined } from "@ant-design/icons";
 
 import { getVsCodeApi, getVsCodeState, setVsCodeState } from "webview/utils";
 
-import style from "./ToDoList.module.less";
+import style from "webview/styles/Task.module.less";
 
 const vscode = getVsCodeApi();
 const vscodeState = getVsCodeState() || {};
@@ -16,17 +18,14 @@ type Task = {
 export const ToDoList: FunctionComponent = () => {
   const [taskList, setTaskList] = useState<Task[]>(vscodeState.taskList || []);
 
-  function doneTask(task: Task) {
-    let doneTaskData;
-    const filteredList = [...taskList].filter((item) => {
-      const isDoneTask = item.id === task.id;
-      if (isDoneTask) {
-        doneTaskData = task;
-      }
-      return !isDoneTask;
-    });
+  function toRemoveTask(task: Task) {
+    const filteredList = [...taskList].filter((item) => item.id !== task.id);
     setTaskList(filteredList);
-    vscode.postMessage({ type: "doneTask", data: doneTaskData });
+  }
+
+  function doneTask(task: Task) {
+    toRemoveTask(task);
+    vscode.postMessage({ type: "doneTask", data: task });
   }
 
   function toUpdateToDoList(data: string | Task) {
@@ -67,12 +66,14 @@ export const ToDoList: FunctionComponent = () => {
     <div className={style("task-list")}>
       {taskList.map((task) => {
         return (
-          <div
-            className={style("task-item")}
-            key={task.id}
-            onClick={() => doneTask(task)}
-          >
-            {task.content}
+          <div className={style("task-item")} key={task.id}>
+            <VSCodeCheckbox onChange={() => doneTask(task)}>
+              {task.content}
+            </VSCodeCheckbox>
+            <CloseCircleOutlined
+              className={style("remove-icon")}
+              onClick={() => toRemoveTask(task)}
+            />
           </div>
         );
       })}

@@ -1,0 +1,30 @@
+.task-list {
+  margin-top: 8px;
+
+  .task-item {
+    position: relative;
+    padding-right: 20px;
+
+    &:hover {
+      background-color: var(--vscode-textPreformat-background);
+
+      .remove-icon {
+        display: block;
+      }
+    }
+
+    &.done {
+      .task-content {
+        text-decoration: line-through;
+      }
+    }
+
+    .remove-icon {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 6px;
+      cursor: pointer;
+    }
+  }
+}

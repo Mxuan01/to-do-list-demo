@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import type { FunctionComponent } from "react";
+import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
+import { CloseCircleOutlined } from "@ant-design/icons";
 
 import { getVsCodeApi, getVsCodeState, setVsCodeState } from "webview/utils";
 
-import style from "./DoneList.module.less";
+import style from "webview/styles/Task.module.less";
 
 const vscode = getVsCodeApi();
 const vscodeState = getVsCodeState() || {};
@@ -16,17 +18,14 @@ type Task = {
 export const DoneList: FunctionComponent = () => {
   const [taskList, setTaskList] = useState<Task[]>(vscodeState.taskList || []);
 
-  function undoTask(task: Task) {
-    let undoTaskData;
-    const filteredList = [...taskList].filter((item) => {
-      const isUndoTask = item.id === task.id;
-      if (isUndoTask) {
-        undoTaskData = task;
-      }
-      return !isUndoTask;
-    });
+  function toRemoveTask(task: Task) {
+    const filteredList = [...taskList].filter((item) => item.id !== task.id);
     setTaskList(filteredList);
-    vscode.postMessage({ type: "undoTask", data: undoTaskData });
+  }
+
+  function undoTask(task: Task) {
+    toRemoveTask(task);
+    vscode.postMessage({ type: "undoTask", data: task });
   }
 
   function toUpdateDoneList(data: Task) {
@@ -63,12 +62,14 @@ export const DoneList: FunctionComponent = () => {
     <div className={style("task-list")}>
       {taskList.map((task) => {
         return (
-          <div
-            className={style("task-item")}
-            key={task.id}
-            onClick={() => undoTask(task)}
-          >
-            {task.content}
+          <div className={style("task-item", "done")} key={task.id}>
+            <VSCodeCheckbox checked onChange={() => undoTask(task)}>
+              <span className={style("task-content")}>{task.content}</span>
+            </VSCodeCheckbox>
+            <CloseCircleOutlined
+              className={style("remove-icon")}
+              onClick={() => toRemoveTask(task)}
+            />
           </div>
         );
       })}
