@@ -3,10 +3,13 @@
 out/**
 node_modules/**
 src/**
+webview/**
 .gitignore
 .yarnrc
-webpack.config.js
-vsc-extension-quickstart.md
+extension.config.js
+webview.config.js
+QUICKSTART.md
+QUICKSTART.md
 **/tsconfig.json
 **/.eslintrc.json
 **/*.map

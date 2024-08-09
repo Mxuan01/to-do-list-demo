@@ -1,7 +1,7 @@
 {
   "name": "to-do-list-demo",
-  "displayName": "to do list demo",
-  "description": "this is a vscode to-do list demo",
+  "displayName": "To-Do List Demo",
+  "description": "this is a vscode webview to-do list demo",
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.91.0"
@@ -9,6 +9,13 @@
   "categories": [
     "Other"
   ],
+  "icon": "media/icon/logo.png",
+  "license": "MIT",
+  "publisher": "you-you",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mxuan01/to-do-list-demo"
+  },
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
@@ -74,14 +81,18 @@
     "watch": "run-p watch:*",
     "watch:wv": "webpack serve --mode development --config ./webview.config.js",
     "watch:ext": "webpack --mode development --watch --config ./extension.config.js",
-    "package": "npm run clean && run-p package:*",
+    "package": "pnpm run clean && run-p package:*",
     "package:wv": "webpack --mode production --config ./webview.config.js --devtool hidden-source-map",
     "package:ext": "webpack --mode production --config ./extension.config.js --devtool hidden-source-map",
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "clean": "rimraf dist",
+    "vsce:package": "pnpm vsce package --no-dependencies",
+    "vsce:pre-release": "pnpm vsce publish --pre-release --no-dependencies",
+    "vsce:publish": "pnpm vsce publish --no-dependencies"
   },
   "devDependencies": {
     "@ant-design/icons": "^5.4.0",
@@ -109,6 +120,7 @@
     "postcss-loader": "^8.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "rimraf": "^6.0.1",
     "ts-loader": "^9.4.3",
     "typescript": "^5.1.3",
     "webpack": "^5.85.0",
