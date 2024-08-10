@@ -3,12 +3,11 @@
  * 出于安全考虑，这里并没有将获取到的 vscode api 对象挂载在 window 下，以防止被其它第三方脚本获取使用。
  */
 
-let vscode: any = null;
+let vsCodeApi: any = null;
 
 export function getVsCodeApi() {
-  if (!vscode) {
-    vscode = window.acquireVsCodeApi();
+  if (!vsCodeApi) {
+    vsCodeApi = window.acquireVsCodeApi();
   }
-
-  return vscode;
+  return vsCodeApi;
 }
