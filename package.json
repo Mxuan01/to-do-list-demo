@@ -2,7 +2,7 @@
   "name": "to-do-list-demo",
   "displayName": "To-Do List Demo",
   "description": "a vscode webview extension demo",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "engines": {
     "vscode": "^1.80.1",
     "node": ">=20.5.0",
