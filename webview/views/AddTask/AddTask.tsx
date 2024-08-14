@@ -15,7 +15,7 @@ export const AddTask = () => {
   }
 
   const toAddTask: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && taskContent) {
       vscode.postMessage({ type: "addTask", content: taskContent });
       setTaskContent("");
     }

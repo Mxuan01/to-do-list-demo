@@ -30,7 +30,7 @@ importers:
         specifier: ^18.3.0
         version: 18.3.0
       '@types/vscode':
-        specifier: ^1.91.0
+        specifier: ^1.80.1
         version: 1.92.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.59.8
