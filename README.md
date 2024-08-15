@@ -1,5 +1,5 @@
 # To-Do List Demo
 
-这是一个用来实践 vscode webview 插件开发的 to-do list demo。效果图如下：
+这是一个用来实践 vscode webview 插件开发的 to-do list demo。
 
-![todo-list-image](https://static.fuxi.netease.com/eevee/fuxi_protal/index/lzmbj2cm_448933.png)
+![todo-list-image](https://upload-images.jianshu.io/upload_images/6639665-86c4fa8f65187110.gif)
