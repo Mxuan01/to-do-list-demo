@@ -43,36 +43,37 @@ export function getHtmlForWebview(
   // Use a nonce to only allow a specific script to be run.
   const nonce = getNonce();
 
-  return `<!DOCTYPE html>
+  return `
+    <!DOCTYPE html>
     <html lang="en">
-    <head>
-      <meta charset="UTF-8">
+      <head>
+        <meta charset="UTF-8">
 
-      <!--
-        Use a content security policy to only allow loading styles from our extension directory,
-        and only allow scripts that have a specific nonce.
-        (See the 'webview-sample' extension sample for img-src content security policy examples)
-      -->
-      <meta
-        http-equiv="Content-Security-Policy"
-        content=" 
-          default-src 'none';
-          style-src ${webview.cspSource} ${localServer};
-          script-src 'nonce-${nonce}' ${localServer};
-          connect-src ws://0.0.0.0:8192/ws ${localServer};
-        "
-      >
+        <!-- Use a content security policy to only allow loading styles from our extension directory, and only allow scripts that have a specific nonce. (See the 'webview-sample' extension sample for img-src content security policy examples) -->
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="
+            default-src 'none';
+            style-src ${webview.cspSource} ${localServer};
+            script-src 'nonce-${nonce}' ${localServer};
+            connect-src ws://0.0.0.0:8192/ws ${localServer};
+          ">
   
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-      ${noStyle ? "" : `<link href="${styleUri}" rel="stylesheet">`}
+        ${noStyle ? "" : `<link href="${styleUri}" rel="stylesheet">`}
       
-      <title>To Do List Demo: ${title}</title>
-    </head>
-    <body>
-      <div id=${id}></div>
+        <title>To Do List Demo: ${title}</title>
+      </head>
+      <body>
+        <div id=${id}></div>
 
-      ${noScript ? "" : `<script nonce="${nonce}" src="${scriptUri}"></script>`}
-    </body>
-    </html>`;
+        ${
+          noScript
+            ? ""
+            : `<script nonce="${nonce}" src="${scriptUri}"></script>`
+        }
+      </body>
+    </html>
+  `;
 }
