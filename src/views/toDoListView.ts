@@ -1,11 +1,20 @@
 import * as vscode from "vscode";
 
-import { ViewType } from "src/constants";
+import { Task } from "src/types/task";
+import {
+  ViewType,
+  TASK_DONE,
+  REMOVE_TASK,
+  WEBVIEW_DOM_READY,
+} from "src/constants";
 import {
   getWebviewOptions,
-  setWebview,
-  getWebview,
   getHtmlForWebview,
+  refreshToDoList,
+  refreshDoneList,
+  showWarningMessage,
+  removeTask,
+  doneTask,
 } from "src/utils";
 
 class ToDoListViewProvider implements vscode.WebviewViewProvider {
@@ -13,38 +22,71 @@ class ToDoListViewProvider implements vscode.WebviewViewProvider {
 
   public static readonly viewType = ViewType.toDoListView;
 
+  public webviewView: vscode.WebviewView | undefined;
+
+  public webviewDomReady = false;
+
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
-    setWebview(ViewType.toDoListView, webviewView.webview);
+    this.webviewView = webviewView;
 
     webviewView.webview.options = getWebviewOptions(this._extensionUri);
-
-    webviewView.webview.onDidReceiveMessage((data) => {
-      switch (data.type) {
-        case "doneTask": {
-          this._toDoneTask(data.data);
-          break;
-        }
-      }
-    });
 
     webviewView.webview.html = getHtmlForWebview(
       webviewView.webview,
       this._extensionUri,
       ViewType.toDoListView
     );
+
+    webviewView.webview.onDidReceiveMessage((data) => {
+      switch (data.type) {
+        case TASK_DONE: {
+          this._handleDoneTask(data.data);
+          break;
+        }
+        case REMOVE_TASK: {
+          this._handleRemoveTask(data.data);
+          break;
+        }
+        case WEBVIEW_DOM_READY: {
+          this.webviewDomReady = true;
+          break;
+        }
+      }
+    });
+
+    webviewView.onDidChangeVisibility(async () => {
+      if (webviewView.visible) {
+        refreshToDoList();
+      } else {
+        this.webviewDomReady = false;
+      }
+    });
+
+    refreshToDoList();
   }
 
-  private _toDoneTask(data: { id: string; content: string }) {
-    const doneView = getWebview(ViewType.doneView);
-    if (doneView) {
-      doneView.postMessage({
-        type: "addTask",
-        data,
-      });
+  private async _handleRemoveTask(data: Task) {
+    try {
+      const taskList = await removeTask(data);
+
+      refreshToDoList(taskList);
+    } catch (error) {
+      showWarningMessage("删除任务失败，请稍后重试");
+    }
+  }
+
+  private async _handleDoneTask(data: Task) {
+    try {
+      const taskList = await doneTask(data);
+
+      refreshToDoList(taskList);
+      refreshDoneList(taskList);
+    } catch (error) {
+      showWarningMessage("更新任务状态失败，请稍后重试");
     }
   }
 }

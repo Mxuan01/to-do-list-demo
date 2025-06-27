@@ -54,7 +54,7 @@ export function getHtmlForWebview(
           http-equiv="Content-Security-Policy"
           content="
             default-src 'none';
-            style-src ${webview.cspSource} ${localServer};
+            style-src 'unsafe-inline' ${webview.cspSource} ${localServer};
             script-src 'nonce-${nonce}' ${localServer};
             connect-src ws://0.0.0.0:8192/ws ${localServer};
           ">

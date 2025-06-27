@@ -3,64 +3,52 @@ import type { FunctionComponent } from "react";
 import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
 import { CloseCircleOutlined } from "@ant-design/icons";
 
-import { getVsCodeApi, getVsCodeState, setVsCodeState } from "webview/utils";
+import type { Task } from "webview/types/task";
+import {
+  TASKS_UPDATE,
+  TASK_DONE,
+  REMOVE_TASK,
+  WEBVIEW_DOM_READY,
+} from "webview/constants";
+import { getVsCodeApi } from "webview/utils";
 
 import style from "webview/styles/Task.module.less";
 
 const vscode = getVsCodeApi();
-const vscodeState = getVsCodeState() || {};
-
-type Task = {
-  id: string;
-  content: string;
-};
 
 export const ToDoList: FunctionComponent = () => {
-  const [taskList, setTaskList] = useState<Task[]>(vscodeState.taskList || []);
+  const [taskList, setTaskList] = useState<Task[]>([]);
 
   function toRemoveTask(task: Task) {
-    const filteredList = [...taskList].filter((item) => item.id !== task.id);
-    setTaskList(filteredList);
+    vscode.postMessage({ type: REMOVE_TASK, data: task });
   }
 
   function doneTask(task: Task) {
-    toRemoveTask(task);
-    vscode.postMessage({ type: "doneTask", data: task });
-  }
-
-  function toUpdateToDoList(data: string | Task) {
-    const tasks = [...taskList];
-    if (typeof data === "string") {
-      tasks.push({ id: `${Date.now()}`, content: data });
-    } else {
-      tasks.push(data);
-    }
-    setTaskList(tasks);
-  }
-
-  function onReceiveMessage(event: MessageEvent<any>) {
-    // The json data that the extension sent
-    const message = event.data;
-
-    switch (message.type) {
-      case "addTask":
-        return toUpdateToDoList(message.data);
-    }
+    vscode.postMessage({ type: TASK_DONE, data: task });
   }
 
   useEffect(() => {
-    setVsCodeState({
-      taskList,
-    });
-  }, [taskList]);
+    function onReceiveMessage(event: MessageEvent<any>) {
+      const message = event.data;
 
-  useEffect(() => {
+      switch (message.type) {
+        case TASKS_UPDATE:
+          return setTaskList(message.data);
+      }
+    }
+
     window.addEventListener("message", onReceiveMessage);
 
     return () => {
       window.removeEventListener("message", onReceiveMessage);
     };
-  }, [onReceiveMessage]);
+  }, []);
+
+  useEffect(() => {
+    vscode.postMessage({
+      type: WEBVIEW_DOM_READY,
+    });
+  }, []);
 
   return (
     <div className={style("task-list")}>

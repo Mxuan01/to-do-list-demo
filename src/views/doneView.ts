@@ -1,11 +1,22 @@
 import * as vscode from "vscode";
 
-import { ViewType } from "src/constants";
+import { Task } from "src/types/task";
+import {
+  ViewType,
+  TASK_UNDO,
+  REMOVE_TASK,
+  CLEAR_DONE_LIST,
+  WEBVIEW_DOM_READY,
+} from "src/constants";
 import {
   getWebviewOptions,
-  setWebview,
-  getWebview,
   getHtmlForWebview,
+  undoTask,
+  removeTask,
+  refreshToDoList,
+  refreshDoneList,
+  clearDoneTasks,
+  showWarningMessage,
 } from "src/utils";
 
 class DoneViewProvider implements vscode.WebviewViewProvider {
@@ -13,48 +24,79 @@ class DoneViewProvider implements vscode.WebviewViewProvider {
 
   public static readonly viewType = ViewType.doneView;
 
-  private _webview?: vscode.Webview;
+  public webviewDomReady = false;
+
+  public webviewView: vscode.WebviewView | undefined;
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
-    this._webview = webviewView.webview;
-
-    setWebview(ViewType.doneView, webviewView.webview);
+    this.webviewView = webviewView;
 
     webviewView.webview.options = getWebviewOptions(this._extensionUri);
-
-    webviewView.webview.onDidReceiveMessage((data) => {
-      switch (data.type) {
-        case "undoTask": {
-          this._toUndoTask(data.data);
-          break;
-        }
-      }
-    });
 
     webviewView.webview.html = getHtmlForWebview(
       webviewView.webview,
       this._extensionUri,
       ViewType.doneView
     );
-  }
 
-  public clearDoneList() {
-    this._webview?.postMessage({
-      type: "clearDoneList",
+    webviewView.webview.onDidReceiveMessage((data) => {
+      switch (data.type) {
+        case TASK_UNDO: {
+          this._handleUndoTask(data.data);
+          break;
+        }
+        case REMOVE_TASK: {
+          this._handleRemoveTask(data.data);
+          break;
+        }
+        case WEBVIEW_DOM_READY: {
+          this.webviewDomReady = true;
+          break;
+        }
+      }
     });
+
+    webviewView.onDidChangeVisibility(async () => {
+      if (webviewView.visible) {
+        refreshDoneList();
+      } else {
+        this.webviewDomReady = false;
+      }
+    });
+
+    refreshDoneList();
   }
 
-  private _toUndoTask(data: { id: string; content: string }) {
-    const toDoListView = getWebview(ViewType.toDoListView);
-    if (toDoListView) {
-      toDoListView.postMessage({
-        type: "addTask",
-        data,
-      });
+  public async clearDoneList() {
+    try {
+      const taskList = await clearDoneTasks();
+      refreshDoneList(taskList);
+    } catch (error) {
+      showWarningMessage("清除已完成任务失败，请稍后重试");
+    }
+  }
+
+  private async _handleRemoveTask(data: Task) {
+    try {
+      const taskList = await removeTask(data);
+      refreshDoneList(taskList);
+    } catch (error) {
+      showWarningMessage("删除任务失败，请稍后重试");
+    }
+  }
+
+  private async _handleUndoTask(data: Task) {
+    try {
+      const taskList = await undoTask(data);
+
+      refreshDoneList(taskList);
+      refreshToDoList(taskList);
+    } catch (error) {
+      showWarningMessage("更新任务状态失败，请稍后重试");
     }
   }
 }

@@ -2,6 +2,13 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 
+import { setExtensionContext } from "./utils/extensionContext";
+import {
+  setAddTaskViewProvider,
+  setToDoListViewProvider,
+  setDoneViewProvider,
+} from "./utils/webviewProvider";
+
 import AddTaskViewProvider from "./views/addTaskView";
 import ToDoListViewProvider from "./views/toDoListView";
 import DoneViewProvider from "./views/doneView";
@@ -15,7 +22,11 @@ export function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "to-do-list-demo" is now active!'
   );
 
+  // 缓存插件上下文
+  setExtensionContext(context);
+
   const addTaskViewProvider = new AddTaskViewProvider(context.extensionUri);
+  setAddTaskViewProvider(addTaskViewProvider);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       AddTaskViewProvider.viewType,
@@ -24,6 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const toDoListViewProvider = new ToDoListViewProvider(context.extensionUri);
+  setToDoListViewProvider(toDoListViewProvider);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       ToDoListViewProvider.viewType,
@@ -32,6 +44,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   const doneViewProvider = new DoneViewProvider(context.extensionUri);
+  setDoneViewProvider(doneViewProvider);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       DoneViewProvider.viewType,
