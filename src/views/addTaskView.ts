@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
 
-import { ViewType, ADD_TASK, ADD_TASK_SUCCESS } from "src/constants";
+import { ViewType, ADD_TASK, ADD_TASK_SUCCESS, LOGIN } from "src/constants";
 import {
   getWebviewOptions,
   getHtmlForWebview,
   addTask,
   showWarningMessage,
   refreshToDoList,
+  getLoginUrl,
 } from "src/utils";
 
 class AddTaskViewProvider implements vscode.WebviewViewProvider {
@@ -27,6 +28,10 @@ class AddTaskViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage((data) => {
       switch (data.type) {
+        case LOGIN: {
+          this._handleLogin();
+          break;
+        }
         case ADD_TASK: {
           this._handleAddTask(data.content);
           break;
@@ -39,6 +44,11 @@ class AddTaskViewProvider implements vscode.WebviewViewProvider {
       this._extensionUri,
       ViewType.addTaskView
     );
+  }
+
+  private async _handleLogin() {
+    const loginUrl = getLoginUrl();
+    vscode.env.openExternal(vscode.Uri.parse(loginUrl));
   }
 
   private async _handleAddTask(content: string) {

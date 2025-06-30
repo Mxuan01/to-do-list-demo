@@ -1,3 +1,6 @@
+export const LOGIN = "login";
+export const LOGIN_SUCCESS = "login_success";
+
 export const TASKS_UPDATE = "tasks_update";
 
 export const ADD_TASK = "add_task";

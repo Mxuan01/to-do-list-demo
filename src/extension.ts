@@ -8,10 +8,13 @@ import {
   setToDoListViewProvider,
   setDoneViewProvider,
 } from "./utils/webviewProvider";
+import { getLoginServer } from "./utils/loginServer";
 
 import AddTaskViewProvider from "./views/addTaskView";
 import ToDoListViewProvider from "./views/toDoListView";
 import DoneViewProvider from "./views/doneView";
+
+const _loginServer = getLoginServer();
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -71,9 +74,15 @@ export function activate(context: vscode.ExtensionContext) {
       );
     })
   );
+
+  // 开启登录服务
+  _loginServer.start();
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {
   console.log('your extension "to-do-list-demo" is now deactivated!');
+
+  // 关闭登录服务
+  _loginServer.stop();
 }

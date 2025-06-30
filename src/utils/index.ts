@@ -9,3 +9,5 @@ export * from "./extensionContext";
 export * from "./webviewProvider";
 export * from "./sleep";
 export * from "./refreshTaskList";
+export * from "./loginServer";
+export * from "./refreshUsername";
