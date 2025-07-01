@@ -10,6 +10,7 @@ import {
   ADD_TASK_SUCCESS,
   LOGIN,
   LOGIN_SUCCESS,
+  WEBVIEW_DOM_READY,
 } from "webview/constants";
 
 import style from "./AddTask.module.less";
@@ -52,6 +53,12 @@ export const AddTask = () => {
     return () => {
       window.removeEventListener("message", onReceiveMessage);
     };
+  }, []);
+
+  useEffect(() => {
+    vscode.postMessage({
+      type: WEBVIEW_DOM_READY,
+    });
   }, []);
 
   return (

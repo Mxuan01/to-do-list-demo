@@ -13,3 +13,4 @@ export * from "./loginServer";
 export * from "./refreshUsername";
 export * from "./getLoginCallbackHtml";
 export * from "./state";
+export * from "./userInfo";

@@ -2,13 +2,7 @@ import { NODE_ENV_PROD, LOGIN_CALLBACK } from "src/constants";
 
 const localServer = "http://localhost:8192";
 
-export function getLoginCallbackHtml({
-  windowId,
-  errorCode,
-}: {
-  windowId: string;
-  errorCode?: string;
-}) {
+export function getLoginCallbackHtml(errorCode?: string) {
   let styleUri = null;
   let scriptUri = null;
   const isProduction = process.env.NODE_ENV === NODE_ENV_PROD;
@@ -38,7 +32,6 @@ export function getLoginCallbackHtml({
         <div id="root"></div>
 
         <script>
-          window.windowId = '${windowId}';
           window.loginErrorCode = ${errorCode ? `'${errorCode}'` : undefined};
         </script>
         <script src="${scriptUri}"></script>

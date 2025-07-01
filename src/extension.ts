@@ -8,7 +8,10 @@ import {
   setToDoListViewProvider,
   setDoneViewProvider,
 } from "./utils/webviewProvider";
-import { createLoginServer, getLoginServer } from "./utils/loginServer";
+import { getLoginServer } from "./utils/loginServer";
+import { createAndWatchUserInfoFile, upsertUserInfo } from "./utils/userInfo";
+import { showInfoMessage } from "./utils/showMessage";
+import { clearServerInfo } from "./utils/loginServerInfo";
 
 import AddTaskViewProvider from "./views/addTaskView";
 import ToDoListViewProvider from "./views/toDoListView";
@@ -63,6 +66,13 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand("to-do-list-demo.logout", () => {
+      upsertUserInfo({});
+      showInfoMessage("退出登录成功");
+    })
+  );
+
+  context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(() => {
       console.log(
         "待办项最大数量",
@@ -73,9 +83,11 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  // 开启登录服务
-  const loginServer = createLoginServer(context.extensionUri);
-  loginServer.start();
+  // 每次打开新的插件实例时，先重置登录服务器信息
+  clearServerInfo();
+
+  // 创建并监听用户信息文件，方便多窗口实例共享
+  createAndWatchUserInfoFile();
 }
 
 // This method is called when your extension is deactivated

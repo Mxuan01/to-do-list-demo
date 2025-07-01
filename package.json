@@ -27,6 +27,12 @@
         "category": "To Do List Demo",
         "title": "清除已完成任务",
         "icon": "$(notebook-delete-cell)"
+      },
+      {
+        "command": "to-do-list-demo.logout",
+        "category": "To Do List Demo",
+        "title": "退出登录",
+        "icon": "$(log-out)"
       }
     ],
     "viewsContainers": {
@@ -131,6 +137,7 @@
   },
   "dependencies": {
     "antd": "^5.26.3",
-    "axios": "^1.10.0"
+    "axios": "^1.10.0",
+    "get-port": "^7.1.0"
   }
 }

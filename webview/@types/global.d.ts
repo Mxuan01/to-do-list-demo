@@ -3,7 +3,6 @@ declare module "*.less";
 interface Window {
   vscode: any;
   acquireVsCodeApi: Function;
-  windowId?: string;
   loginErrorCode?: string;
 }
 

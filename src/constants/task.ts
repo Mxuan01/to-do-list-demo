@@ -1,4 +1,6 @@
-export const TASK_LIST_KEY = "__to_do_list_demo__task_list__";
+import { getGlobalStateKey } from "../utils/getGlobalStateKey";
+
+export const TASK_LIST_KEY = getGlobalStateKey("task_list");
 
 export enum TaskStatus {
   Todo = "todo",

@@ -2,18 +2,21 @@ import * as vscode from "vscode";
 import * as url from "url";
 import * as http from "http";
 
+import getPort from "get-port";
+
 import Axios from "src/service";
 import {
   CLIENT_ID,
   CLIENT_SECRET,
   LOGIN_CALLBACK,
   LoginErrorCode,
+  LoginServerStatus,
 } from "src/constants";
 
 import { getState, newState, resetState } from "./state";
-import { refreshUsername } from "./refreshUsername";
 import { getLoginCallbackHtml } from "./getLoginCallbackHtml";
-import { getWindowId } from "./getWindowId";
+import { getServerInfo, updateServerInfo } from "./loginServerInfo";
+import { upsertUserInfo } from "./userInfo";
 
 type HttpReq = http.IncomingMessage;
 
@@ -30,30 +33,45 @@ class LoginServer {
 
   private _server: http.Server | null = null;
 
-  private _port: number = DEFAULT_LOGIN_SERVER_PORT;
-
   private _isRunning: boolean = false;
 
   private _extensionUri: vscode.Uri;
 
   // 启动服务器
-  public start() {
-    if (this._isRunning) {
-      return;
-    }
+  public async start() {
+    return new Promise(async (resolve, reject) => {
+      // 当某一个插件实例已启动服务，则不再重复启动
+      const serverInfo = getServerInfo();
+      if (serverInfo?.status === LoginServerStatus.RUNNING) {
+        return resolve(true);
+      }
 
-    // 创建 HTTP 服务器
-    this._server = http.createServer((req, res) => {
-      this._handleRequest(req, res);
-    });
+      // 创建 HTTP 服务器
+      const server = http.createServer((req, res) => {
+        this._handleRequest(req, res);
+      });
+      const serverPort = await getPort({ port: DEFAULT_LOGIN_SERVER_PORT });
 
-    this._server.listen(this._port, () => {
-      this._isRunning = true;
-    });
+      server.listen(serverPort, async () => {
+        this._server = server;
+        this._isRunning = true;
 
-    this._server.on("error", (err) => {
-      this._isRunning = false;
-      console.error(`登录服务器启动失败 ===========> ${err.message}`);
+        await updateServerInfo({
+          port: serverPort,
+          status: LoginServerStatus.RUNNING,
+        });
+
+        resolve(true);
+      });
+
+      server.on("error", async (err) => {
+        this._server = null;
+        this._isRunning = false;
+
+        await updateServerInfo({ status: LoginServerStatus.STOPPED });
+
+        reject(err.message);
+      });
     });
   }
 
@@ -90,6 +108,12 @@ class LoginServer {
         filePath: `/dist/${LOGIN_CALLBACK}.js`,
         contentType: "text/javascript; charset=utf-8",
       });
+    } else if (url.startsWith(`/static/images/`)) {
+      this._respondStaticFileContent({
+        res,
+        filePath: `/dist/${url.split("/static/").join("")}`,
+        contentType: "image/png",
+      });
     } else if (url.startsWith(`/static/logo.png`)) {
       this._respondStaticFileContent({
         res,
@@ -105,14 +129,12 @@ class LoginServer {
   private async _handleLoginCallback(reqUrl: string, res: HttpRes) {
     const { code, state } = url.parse(reqUrl, true).query;
     const cachedState = getState();
-    const windowId = await getWindowId();
 
     // 校验 state，防止 CSRF
     if (state !== cachedState) {
       return this._handleLoginError({
         res,
         errorCode: LoginErrorCode.INVALID_PARAM,
-        windowId,
       });
     }
 
@@ -123,7 +145,6 @@ class LoginServer {
       return this._handleLoginError({
         res,
         errorCode: LoginErrorCode.INVALID_PARAM,
-        windowId,
       });
     }
 
@@ -146,7 +167,6 @@ class LoginServer {
       return this._handleLoginError({
         res,
         errorCode: LoginErrorCode.FETCH_USER_INFO_ERROR,
-        windowId,
       });
     }
 
@@ -161,27 +181,24 @@ class LoginServer {
       return this._handleLoginError({
         res,
         errorCode: LoginErrorCode.FETCH_USER_INFO_ERROR,
-        windowId,
       });
     }
 
-    refreshUsername(userRes.data.name);
+    upsertUserInfo(userRes.data);
     res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(getLoginCallbackHtml({ windowId }));
+    res.end(getLoginCallbackHtml());
   }
 
   // 登录失败
   private _handleLoginError({
     res,
     errorCode,
-    windowId,
   }: {
     res: HttpRes;
     errorCode: LoginErrorCode;
-    windowId: string;
   }) {
     res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(getLoginCallbackHtml({ errorCode, windowId }));
+    res.end(getLoginCallbackHtml(errorCode));
   }
 
   private async _respondStaticFileContent({
@@ -228,6 +245,11 @@ export function getLoginServer() {
 }
 
 export async function getLoginUrl() {
+  const serverInfo = getServerInfo();
+  if (!serverInfo) {
+    return Promise.reject("未找到登录服务器信息");
+  }
+
   const state = await newState();
-  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=http://localhost:${DEFAULT_LOGIN_SERVER_PORT}/login/callback&state=${state}&scope=read:user%20user:email`;
+  return `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=http://localhost:${serverInfo.port}/login/callback&state=${state}&scope=read:user%20user:email`;
 }

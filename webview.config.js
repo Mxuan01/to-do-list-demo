@@ -105,7 +105,7 @@ const webviewConfig = [
           test: /\.(png|jpg|jpeg|gif|svg)$/,
           type: "asset/resource",
           generator: {
-            filename: "images/[name][hash]",
+            filename: "images/[name][hash][ext]",
           },
         },
       ],
