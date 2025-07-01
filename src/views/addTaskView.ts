@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { ViewType, ADD_TASK, ADD_TASK_SUCCESS, LOGIN } from "src/constants";
 import {
   getWebviewOptions,
-  getHtmlForWebview,
+  getWebviewHtml,
   addTask,
   showWarningMessage,
   refreshToDoList,
@@ -39,7 +39,7 @@ class AddTaskViewProvider implements vscode.WebviewViewProvider {
       }
     });
 
-    webviewView.webview.html = getHtmlForWebview(
+    webviewView.webview.html = getWebviewHtml(
       webviewView.webview,
       this._extensionUri,
       ViewType.addTaskView
@@ -47,7 +47,7 @@ class AddTaskViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async _handleLogin() {
-    const loginUrl = getLoginUrl();
+    const loginUrl = await getLoginUrl();
     vscode.env.openExternal(vscode.Uri.parse(loginUrl));
   }
 

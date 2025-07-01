@@ -1,4 +1,4 @@
-export * from "./getHtmlForWebview";
+export * from "./getWebviewHtml";
 export * from "./getNonce";
 export * from "./getUri";
 export * from "./getWebviewOptions";
@@ -11,3 +11,5 @@ export * from "./sleep";
 export * from "./refreshTaskList";
 export * from "./loginServer";
 export * from "./refreshUsername";
+export * from "./getLoginCallbackHtml";
+export * from "./state";

@@ -3,26 +3,9 @@ import * as vscode from "vscode";
 import { ViewType, NODE_ENV_PROD } from "src/constants";
 import { getUri, getNonce } from "src/utils";
 
-const webviewInfoMap: Record<
-  ViewType,
-  { id: string; title: string; noStyle?: boolean; noScript?: boolean }
-> = {
-  [ViewType.addTaskView]: {
-    id: ViewType.addTaskView,
-    title: "添加待办项",
-  },
-  [ViewType.toDoListView]: {
-    id: ViewType.toDoListView,
-    title: "待办项",
-  },
-  [ViewType.doneView]: {
-    id: ViewType.doneView,
-    title: "已完成",
-  },
-};
 const localServer = "http://localhost:8192";
 
-export function getHtmlForWebview(
+export function getWebviewHtml(
   webview: vscode.Webview,
   extensionUri: vscode.Uri,
   viewType: ViewType
@@ -30,7 +13,6 @@ export function getHtmlForWebview(
   let styleUri = null;
   let scriptUri = null;
   const isProduction = process.env.NODE_ENV === NODE_ENV_PROD;
-  const { id, title, noStyle, noScript } = webviewInfoMap[viewType];
 
   if (isProduction) {
     styleUri = getUri(webview, extensionUri, ["dist", `${viewType}.css`]);
@@ -57,22 +39,19 @@ export function getHtmlForWebview(
             style-src 'unsafe-inline' ${webview.cspSource} ${localServer};
             script-src 'nonce-${nonce}' ${localServer};
             connect-src ws://0.0.0.0:8192/ws ${localServer};
+            img-src https: ${webview.cspSource} ${localServer};
           ">
   
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        ${noStyle ? "" : `<link href="${styleUri}" rel="stylesheet">`}
+        <link href="${styleUri}" rel="stylesheet">
       
-        <title>To Do List Demo: ${title}</title>
+        <title>To-Do List Demo</title>
       </head>
       <body>
-        <div id=${id}></div>
+        <div id="root"></div>
 
-        ${
-          noScript
-            ? ""
-            : `<script nonce="${nonce}" src="${scriptUri}"></script>`
-        }
+        <script nonce="${nonce}" src="${scriptUri}"></script>
       </body>
     </html>
   `;

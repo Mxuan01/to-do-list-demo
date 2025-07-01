@@ -15,6 +15,7 @@ const webviewConfig = [
       addTaskView: resolveApp("webview/views/AddTask"),
       toDoListView: resolveApp("webview/views/ToDoList"),
       doneView: resolveApp("webview/views/DoneList"),
+      loginCallback: resolveApp("webview/views/LoginCallback"),
     },
     output: {
       filename: "[name].js",
@@ -99,6 +100,13 @@ const webviewConfig = [
               },
             },
           ],
+        },
+        {
+          test: /\.(png|jpg|jpeg|gif|svg)$/,
+          type: "asset/resource",
+          generator: {
+            filename: "images/[name][hash]",
+          },
         },
       ],
     },

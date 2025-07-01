@@ -3,11 +3,9 @@ import "webview/styles/index.less";
 import * as React from "react";
 import { getClientRoot } from "webview/utils";
 
-import { ViewType } from "webview/constants";
-
 import { DoneList } from "./DoneList";
 
-const root = getClientRoot(ViewType.doneView);
+const root = getClientRoot("root");
 root.render(<DoneList />);
 
 // Webpack HMR

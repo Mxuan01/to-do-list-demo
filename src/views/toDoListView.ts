@@ -9,7 +9,7 @@ import {
 } from "src/constants";
 import {
   getWebviewOptions,
-  getHtmlForWebview,
+  getWebviewHtml,
   refreshToDoList,
   refreshDoneList,
   showWarningMessage,
@@ -35,7 +35,7 @@ class ToDoListViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.options = getWebviewOptions(this._extensionUri);
 
-    webviewView.webview.html = getHtmlForWebview(
+    webviewView.webview.html = getWebviewHtml(
       webviewView.webview,
       this._extensionUri,
       ViewType.toDoListView

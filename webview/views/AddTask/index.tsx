@@ -1,11 +1,10 @@
 import * as React from "react";
 
-import { ViewType } from "webview/constants";
 import { getClientRoot } from "webview/utils";
 
 import { AddTask } from "./AddTask";
 
-const root = getClientRoot(ViewType.addTaskView);
+const root = getClientRoot("root");
 root.render(<AddTask />);
 
 // Webpack HMR

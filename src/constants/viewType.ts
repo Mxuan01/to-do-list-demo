@@ -3,3 +3,5 @@ export enum ViewType {
   toDoListView = "toDoListView",
   doneView = "doneView",
 }
+
+export const LOGIN_CALLBACK = "loginCallback";

@@ -1,13 +1,11 @@
-import "webview/styles/index.less";
-
 import * as React from "react";
 
-import { getClientRoot } from "webview/utils";
+import { getClientRoot } from "webview/utils/clientRoot";
 
-import { ToDoList } from "./ToDoList";
+import { LoginCallback } from "./LoginCallback";
 
 const root = getClientRoot("root");
-root.render(<ToDoList />);
+root.render(<LoginCallback />);
 
 // Webpack HMR
 if (import.meta.webpackHot) {

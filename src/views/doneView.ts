@@ -5,12 +5,11 @@ import {
   ViewType,
   TASK_UNDO,
   REMOVE_TASK,
-  CLEAR_DONE_LIST,
   WEBVIEW_DOM_READY,
 } from "src/constants";
 import {
   getWebviewOptions,
-  getHtmlForWebview,
+  getWebviewHtml,
   undoTask,
   removeTask,
   refreshToDoList,
@@ -37,7 +36,7 @@ class DoneViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.options = getWebviewOptions(this._extensionUri);
 
-    webviewView.webview.html = getHtmlForWebview(
+    webviewView.webview.html = getWebviewHtml(
       webviewView.webview,
       this._extensionUri,
       ViewType.doneView

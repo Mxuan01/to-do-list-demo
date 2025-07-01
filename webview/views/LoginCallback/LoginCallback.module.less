@@ -1,0 +1,59 @@
+:global {
+  body {
+    background-color: #f0f1f5;
+  }
+}
+
+.login-callback {
+  width: 100%;
+  height: 100%;
+
+  .main-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    min-height: 240px;
+    padding: 24px;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border-radius: 8px;
+    background-color: #fff;
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 500;
+      color: #26282b;
+      margin-bottom: 16px;
+    }
+
+    .icon-container {
+      font-size: 72px;
+
+      &.success {
+        color: rgb(82, 196, 26);
+      }
+
+      &.warning {
+        color: rgb(226, 132, 16);
+      }
+    }
+
+    .msg {
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 24px;
+      font-weight: 500;
+      margin: 16px 0;
+    }
+
+    .description {
+      color: rgba(0, 0, 0, 0.45);
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+}
